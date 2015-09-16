@@ -2,7 +2,7 @@
 
 # node-libkv
 
-Provides a standardized API for multiple key/value storage backends.
+Provides a standardized API for multiple key/value storage backends. Inspired by https://github.com/docker/libkv
 
 ## Supported Backends
 
