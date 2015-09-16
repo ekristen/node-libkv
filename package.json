@@ -4,7 +4,7 @@
   "description": "Provides a standard API for various Key/Value Storage engines",
   "main": "libkv.js",
   "scripts": {
-    "test": "npm run backends"
+    "test": "node test.js"
   },
   "author": "Erik Kristensen <erik@erikkristensen.com>",
   "license": "MIT",
