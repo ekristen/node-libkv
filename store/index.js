@@ -1,9 +1,9 @@
+var debug = require('debug')('libkv:store:base')
 var url = require('url')
 var util = require('util')
 var events = require('events')
 
 function Store(options) {
-
   if (typeof options.uri != 'undefined') {
     this.uri = url.parse(options.uri)
   }
@@ -11,19 +11,39 @@ function Store(options) {
   this.options = options
 }
 util.inherits(Store, events.EventEmitter)
+module.exports = Store
 
-Store.prototype.put = function putNoop() {}
-Store.prototype.get = function getNoop() {}
-Store.prototype.delete = function deleteNoop() {}
-Store.prototype.exists = function existsNoop() {}
-Store.prototype.watch = function watchNoop() {}
-Store.prototype.list = function listNoop() {}
-Store.prototype.close = function closeNoop(callback) {
+Store.prototype.get = function StoreGetNoop() {}
+Store.prototype.getValue = function StoreGetValueNoop() {}
+Store.prototype.getMetadata = function StoreGetMetadataNoop() {}
+
+Store.prototype.set = function StoreSetNoop() {}
+Store.prototype.put = Store.prototype.set
+
+Store.prototype.delete = function StoreDeleteNoop() {}
+Store.prototype.exists = function StoreExistsNoop() {}
+Store.prototype.watch = function StoreWatchNoop() {}
+
+Store.prototype.close = function StoreCloseNoop(callback) {
   if (typeof callback != 'function') {
-    callback = function StoreCloseNoop() {}
+    callback = function StoreCloseCallbackNoop() {}
   }
   
   callback()
 }
 
-module.exports = Store
+Store.prototype.normalize = function Normalize(key) {
+  return '/' + SplitKey(key).join('/')
+}
+
+
+function SplitKey(key) {
+  if (key.indexOf('/') >= 0) {
+    path = key.split('/')
+  }
+  else {
+    path = [ key ]
+  }
+  
+  return path
+}

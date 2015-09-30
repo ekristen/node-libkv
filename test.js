@@ -4,19 +4,27 @@ var async = require('async')
 
 var backends = [
   'consul',
+  'etcd',
+  'level',
   'redis',
-  'etcd'
+  'zookeeper'
 ]
 
 var configs = {
-  redis: {
-    uri: 'redis://127.0.0.1'
-  },
   consul: {
     uri: 'consul://192.168.1.152'
   },
   etcd: {
     uri: 'etcd://127.0.0.1'
+  },
+  level: {
+    uri: 'level:///tmp/testdb'
+  },
+  redis: {
+    uri: 'redis://'
+  },
+  zookeeper: {
+    uri: 'zookeeper://127.0.0.1'
   }
 }
 
@@ -35,7 +43,8 @@ var tests = {
     client.set('one', 'two', function(err, result) {
       client.get('one', function(err, res) {
         test.ok(!err, 'no error')
-        test.equal(res, 'two')
+        test.equal(res.Key, 'one')
+        test.equal(res.Value, 'two')
 
         client.close(test.end.bind(null))
         
@@ -78,6 +87,7 @@ var tests = {
   }
 }
 
+
 async.eachSeries(backends, function(backend, backendCallback) {
 
   async.eachSeries(Object.keys(tests), function(func, testCallback) {
@@ -93,47 +103,3 @@ async.eachSeries(backends, function(backend, backendCallback) {
 }, function(err) {
 
 })
-
-/*
-test('redis#set', function(t) {
-
-  var redis = libkv('redis', {
-    uri: 'redis://192.168.1.55'
-  })
-
-  redis.set('one', 'two', function(err, result) {
-    t.ok(!err)
-    t.equal(result, 'OK')
-    
-    redis.redis.quit(t.end.bind(null))
-  })
-})
-
-test('redis#put', function(t) {
-
-  var redis = libkv('redis', {
-    uri: 'redis://192.168.1.55'
-  })
-
-  redis.set('one', 'two', function(err, result) {
-    t.ok(!err)
-    t.equal(result, 'OK')
-    
-    redis.redis.quit(t.end.bind(null))
-  })
-})
-
-test('redis#get', function(t) {
-  var redis = libkv('redis', {
-    uri: 'redis://192.168.1.55'
-  })
-
-  redis.get('one', function(err, result) {
-    t.ok(!err)
-    t.equal(result, 'two')
-
-    redis.redis.quit(t.end.bind(null))
-  })
-})
-
-*/

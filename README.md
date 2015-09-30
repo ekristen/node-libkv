@@ -8,8 +8,6 @@ Provides a standardized API for multiple key/value storage backends. Inspired by
 
 * Consul
 * etcd
-* Level
-* Level (via Multilevel)
 * Redis
 * Zookeeper
 
@@ -20,17 +18,14 @@ Provides a standardized API for multiple key/value storage backends. Inspired by
 * delete
 * exists
 
-### SET
+### .get(key, [options], [callback])
 
-```javascript
-client.set('example', 'value', function(err, ok, data, res) {
-  // err
-  // ok == true or false
+### .set(key, value = null, [options], [callback])
 
-  // data == original data returned by consul / etcd
-  // res == original response object from consul / etcd
-})
-```
+### .delete(key, [options], [callback])
+
+### .watch(key, [options], [callback])
+
 
 ## Usage
 

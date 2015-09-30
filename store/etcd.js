@@ -9,6 +9,10 @@ var Etcd = function Etcd(options) {
     throw new Error('unexpected uri format', this.href)
   }
 
+  if (this.uri.host == '') {
+    this.uri.host = '127.0.0.1'
+  }
+
   if (this.uri.port == null) {
     this.uri.port = 2379
   }
@@ -16,29 +20,56 @@ var Etcd = function Etcd(options) {
   var etcd = require('node-etcd')
   this.etcd = new etcd(this.uri.host, this.uri.port)
 
+  debug('connected', {host: this.uri.host, port: this.uri.port})
+
   return this
 }
 util.inherits(Etcd, Store)
 module.exports = Etcd
 
 
-Etcd.prototype.get = function EtcdGet(key, callback) {
-  this.etcd.get(key, function(err, data, res) {
+Etcd.prototype.get = function EtcdGet(key, options, callback) {
+  debug('get - key: %s', this.normalize(key))
+
+  if (typeof options == 'function') {
+    callback = options
+    options = {}
+  }
+
+  this.etcd.get(this.normalize(key), function(err, data, res) {
     if (err) {
+      debug('get - error: %j', err)
       return callback(err)
     }
 
     if (data.action == 'get') {
-      return callback(null, data.node.value, data, res)
+      var pair = {
+        Key: data.node.key.substr(1),
+        Value: data.node.value,
+        Metadata: {
+          CreatedIndex: data.node.createdIndex,
+          ModifiedIndex: data.node.modifiedIndex
+        }
+      }
+      
+      return callback(null, pair)
     }
 
-    callback(null, null, data, res)
+    callback(null, null)
   })
 }
 
-Etcd.prototype.set = function EtcdSet(key, value, callback) {
-  this.etcd.set(key, value, function(err, data, res) {
+Etcd.prototype.set = function EtcdSet(key, value, options, callback) {
+  debug('set - key: %s', this.normalize(key))
+
+  if (typeof options == 'function') {
+    callback = options
+    options = {}
+  }
+
+  this.etcd.set(this.normalize(key), value, function(err, data, res) {
     if (err) {
+      debug('set - error: %j', err)
       return callback(err)
     }
 
@@ -52,8 +83,10 @@ Etcd.prototype.set = function EtcdSet(key, value, callback) {
 Etcd.prototype.put = Etcd.prototype.set
 
 Etcd.prototype.delete = function EtcdDelete(key, callback) {
-  this.etcd.delete(key, function(err, data, res) {
+  debug('delete - key: %s', this.normalize(key))
+  this.etcd.delete(this.normalize(key), function(err, data, res) {
     if (err) {
+      debug('delete - error: %j', err)
       return callback(err)
     }
 
@@ -66,8 +99,10 @@ Etcd.prototype.delete = function EtcdDelete(key, callback) {
 }
 
 Etcd.prototype.exists = function EtcdExists(key, callback) {
-  this.etcd.get(key, function(err, data, res) {
+  debug('exists - key: %s', this.normalize(key))
+  this.etcd.get(this.normalize(key), function(err, data, res) {
     if (err && err.errorCode != 100) {
+      debug('exists - error: %j', err)
       return callback(err, data, res)
     }
 

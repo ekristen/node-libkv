@@ -1,18 +1,13 @@
-var backends = [
-  'consul',
-  'redis',
-  'etcd'
-]
-
 var initializers = {
   'consul': require('./store/consul.js'),
+  'etcd': require('./store/etcd.js'),
+  'level': require('./store/level.js'),
   'redis': require('./store/redis.js'),
-  'etcd': require('./store/etcd.js')
+  'zookeeper': require('./store/zookeeper.js')
 }
 
-
 var NewStore = function(backend, options) {
-  if (backends.indexOf(backend) !== -1) {
+  if (typeof initializers[backend] !== 'undefined') {
     return new initializers[backend](options)
   }
 
