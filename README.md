@@ -1,4 +1,4 @@
-*WIP* This is alpha, some tests pass, basic functionality is there, things could change.
+**WIP:** This is alpha/beta, tests pass, basic functionality is there, things most likely will change. Until the library hits v1.0.0, all bets are off on backwards compatibility. 
 
 # node-libkv
 
