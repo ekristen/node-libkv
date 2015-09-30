@@ -27,13 +27,13 @@ Consul, redis, and LevelDB strip the `/` from the beginning of the key, but it i
 * delete (aliases: remove, del)
 * exists
 
-Not all backends support `[options]`
+The below definitions are general, they vary slightly by backend.
 
 ### .get(key, [options], [callback])
 
 ### .set(key, value = null, [options], [callback])
 
-### .delete(key, [options], [callback])
+### .delete(key, [callback])
 
 ### .watch(key, [options], [callback])
 

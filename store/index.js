@@ -21,6 +21,9 @@ Store.prototype.set = function StoreSetNoop() {}
 Store.prototype.put = Store.prototype.set
 
 Store.prototype.delete = function StoreDeleteNoop() {}
+Store.prototype.del = Store.prototype.delete
+Store.prototype.remove = Store.prototype.delete
+
 Store.prototype.exists = function StoreExistsNoop() {}
 Store.prototype.watch = function StoreWatchNoop() {}
 
