@@ -8,6 +8,7 @@ Provides a standardized API for multiple key/value storage backends. Inspired by
 
 * Consul
 * etcd
+* LevelDB
 * Redis
 * Zookeeper
 
@@ -18,11 +19,13 @@ Provides a standardized API for multiple key/value storage backends. Inspired by
 * delete
 * exists
 
+The below definitions are general, they vary slightly by backend.
+
 ### .get(key, [options], [callback])
 
 ### .set(key, value = null, [options], [callback])
 
-### .delete(key, [options], [callback])
+### .delete(key, [callback])
 
 ### .watch(key, [options], [callback])
 

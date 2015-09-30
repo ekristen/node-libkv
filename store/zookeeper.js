@@ -114,6 +114,10 @@ Zookeeper.prototype.exists = function ZookeeperExists(key, callback) {
   })
 }
 
+Zookeeper.prototype.watch = function ZookeeperWatch(key) {
+  
+}
+
 Zookeeper.prototype.close = function ZookeeperClose(callback) {
   if (typeof callback != 'function') {
     callback = function ZookeeperCloseNoop() {}

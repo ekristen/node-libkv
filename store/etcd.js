@@ -117,3 +117,8 @@ Etcd.prototype.exists = function EtcdExists(key, callback) {
     callback(null, false, data, res)
   })
 }
+
+Etcd.prototype.watch = function EtcdWatch(key, options) {
+  options = options || {}
+  return this.etcd.watcher(key, options)
+}
