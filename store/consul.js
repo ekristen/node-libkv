@@ -125,7 +125,7 @@ Consul.prototype.exists = function ConsulExists(key, callback) {
   })
 }
 
-Consol.prototype.watch = function ConsulWatch(key) {
+Consul.prototype.watch = function ConsulWatch(key) {
   return this.consul.watch({
     method: consul.kv.get,
     options: {
