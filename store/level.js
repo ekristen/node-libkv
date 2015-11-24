@@ -2,6 +2,7 @@ var debug = require('debug')('libkv:store:level')
 var util = require('util')
 var level = require('level')
 var Store = require('./index')
+var NotFoundError = require('./error')
 
 var Level = function Level(options) {
   Level.super_.apply(this, arguments)
@@ -25,7 +26,7 @@ Level.prototype.get = function LevelGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.get(this.normalize(key), function(err, value) {
     if (err && err.status == 404) {
-      return callback(null, value, {statusCode: 404, code: 404})
+      return callback(new NotFoundError())
     }
 
     if (err) {

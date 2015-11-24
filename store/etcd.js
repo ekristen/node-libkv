@@ -1,6 +1,7 @@
 var debug = require('debug')('libkv:store:etcd')
 var util = require('util')
 var Store = require('./index')
+var NotFoundError = require('./error')
 
 var Etcd = function Etcd(options) {
   Etcd.super_.apply(this, arguments)
@@ -39,7 +40,7 @@ Etcd.prototype.get = function EtcdGet(key, options, callback) {
   this.etcd.get(this.normalize(key), function(err, data, res) {
     if (err && err.errorCode == 100) {
       debug('get - not found - key: %s', key)
-      return callback(null, data, {status: 404, statusCode: 404})
+      return callback(new NotFoundError())
     }
 
     if (err) {

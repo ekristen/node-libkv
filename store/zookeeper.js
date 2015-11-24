@@ -1,6 +1,7 @@
 var debug = require('debug')('libkv:store:zookeeper')
 var util = require('util')
 var Store = require('./index')
+var NotFoundError = require('./error')
 
 var Zookeeper = function Zookeeper(options) {
   Zookeeper.super_.apply(this, arguments)
@@ -33,7 +34,7 @@ Zookeeper.prototype.get = function ZookeeperGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.getData(this.normalize(key), function(err, data, stat) {
     if (err && err.code == -101) {
-      return callback(null, data, {status: 404, statusCode: 404})
+      return callback(new NotFoundError())
     }
 
     if (err) {

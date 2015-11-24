@@ -3,7 +3,7 @@ var util = require('util')
 var xtend = require('xtend')
 var clone = require('clone')
 var Store = require('./index')
-
+var NotFoundError = require('./error')
 
 var Consul = function Consul(options) {
   Consul.super_.apply(this, arguments)
@@ -50,8 +50,8 @@ Consul.prototype.get = function ConsulGet(key, options, callback) {
       return callback(err)
     }
 
-    if (typeof data == 'undefined' || data == null) {
-      return callback(err, data, res)
+    if (typeof data == 'undefined' || data == null || res.statusCode == 404) {
+      return callback(new NotFoundError())
     }
 
     var pair = {

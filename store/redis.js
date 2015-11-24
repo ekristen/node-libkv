@@ -1,6 +1,7 @@
 var debug = require('debug')('libkv:store:redis')
 var util = require('util')
 var Store = require('./index')
+var NotFoundError = require('./error')
 
 var Redis = function Redis(endpoints, options) {
   Redis.super_.apply(this, arguments)
@@ -37,7 +38,7 @@ Redis.prototype.get = function RedisGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.get(this.normalize(key), function(err, value) {
     if (err == null && value == null) {
-      return callback(null, null, {status: 404, statusCode: 404})
+      return callback(new NotFoundError())
     }
 
     if (err) {

@@ -54,8 +54,8 @@ var tests = {
   },
   getMissing: function(client, test, callback) {
     client.get('oneone', function(err, data, res) {
-      test.equal(res.status, 404)
-      test.equal(res.statusCode, 404)
+      test.ok(err)
+      test.equal(err.status, 404)
       client.close(test.end.bind(null))
       callback()
     })
