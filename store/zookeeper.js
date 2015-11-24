@@ -32,6 +32,10 @@ module.exports = Zookeeper
 Zookeeper.prototype.get = function ZookeeperGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.getData(this.normalize(key), function(err, data, stat) {
+    if (err && err.code == -101) {
+      return callback(null, data, {status: 404, statusCode: 404})
+    }
+
     if (err) {
       debug('get - error: %j', err)
       return callback(err)

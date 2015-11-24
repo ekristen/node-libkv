@@ -36,6 +36,10 @@ module.exports = Redis
 Redis.prototype.get = function RedisGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.get(this.normalize(key), function(err, value) {
+    if (err == null && value == null) {
+      return callback(null, null, {status: 404, statusCode: 404})
+    }
+
     if (err) {
       debug('get - error: %j', err)
       return callback(err)

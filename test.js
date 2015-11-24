@@ -12,7 +12,7 @@ var backends = [
 
 var configs = {
   consul: {
-    uri: 'consul://192.168.1.152'
+    uri: 'consul://127.0.0.1'
   },
   etcd: {
     uri: 'etcd://127.0.0.1'
@@ -50,6 +50,14 @@ var tests = {
         
         callback()
       })
+    })
+  },
+  getMissing: function(client, test, callback) {
+    client.get('oneone', function(err, data, res) {
+      test.equal(res.status, 404)
+      test.equal(res.statusCode, 404)
+      client.close(test.end.bind(null))
+      callback()
     })
   },
   delete: function(client, test, callback) {
