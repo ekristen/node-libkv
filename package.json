@@ -1,6 +1,6 @@
 {
   "name": "libkv",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Provides a standard API for various Key/Value Storage engines",
   "main": "libkv.js",
   "scripts": {

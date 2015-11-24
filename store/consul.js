@@ -50,6 +50,10 @@ Consul.prototype.get = function ConsulGet(key, options, callback) {
       return callback(err)
     }
 
+    if (typeof data == 'undefined' || data == null) {
+      return callback(err, data, res)
+    }
+
     var pair = {
       Key: data.Key,
       Value: data.Value,

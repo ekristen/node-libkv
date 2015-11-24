@@ -24,6 +24,10 @@ module.exports = Level
 Level.prototype.get = function LevelGet(key, callback) {
   debug('get - key: %s', this.normalize(key))
   this.store.get(this.normalize(key), function(err, value) {
+    if (err && err.status == 404) {
+      return callback(null, value, {status: 404})
+    }
+
     if (err) {
       return callback(err)
     }
