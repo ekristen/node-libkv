@@ -33,6 +33,9 @@ The below definitions are general, they vary slightly by backend.
 
 ### .set(key, value = null, [options], [callback])
 
+* ttl (in seconds) (redis, etcd, leveldb)
+* maxRetries (etcd)
+
 ### .delete(key, [callback])
 
 ### .watch(key, [options], [callback])
@@ -54,3 +57,7 @@ client.set('example', 'value', function(err, ok) {
 })
 
 ```
+
+## Testing
+
+`npm test` or `npm test <backend>` (example: `npm test redis`)

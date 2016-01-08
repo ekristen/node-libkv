@@ -31,7 +31,10 @@ module.exports = Zookeeper
 
 
 Zookeeper.prototype.get = function ZookeeperGet(key, callback) {
+  var self = this
+
   debug('get - key: %s', this.normalize(key))
+
   this.store.getData(this.normalize(key), function(err, data, stat) {
     if (err && err.code == -101) {
       return callback(new NotFoundError())
@@ -49,6 +52,10 @@ Zookeeper.prototype.get = function ZookeeperGet(key, callback) {
     }
 
     debug('get - pair: %j', pair)
+
+    if (self.options.valueOnly) {
+      return callback(null, pair.Value)
+    }
 
     callback(null, pair)
   })

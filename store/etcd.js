@@ -17,6 +17,8 @@ var Etcd = function Etcd(options) {
   if (this.uri.port == null) {
     this.uri.port = 2379
   }
+  
+  this._supportsTTL = true
 
   var etcd = require('node-etcd')
   this.etcd = new etcd(this.uri.host, this.uri.port)
@@ -30,6 +32,8 @@ module.exports = Etcd
 
 
 Etcd.prototype.get = function EtcdGet(key, options, callback) {
+  var self = this
+
   debug('get - key: %s', this.normalize(key))
 
   if (typeof options == 'function') {
@@ -57,7 +61,11 @@ Etcd.prototype.get = function EtcdGet(key, options, callback) {
           ModifiedIndex: data.node.modifiedIndex
         }
       }
-      
+
+      if (self.options.valueOnly) {
+        return callback(null, pair.Value)
+      }
+
       return callback(null, pair, res)
     }
 
@@ -73,7 +81,7 @@ Etcd.prototype.set = function EtcdSet(key, value, options, callback) {
     options = {}
   }
 
-  this.etcd.set(this.normalize(key), value, function(err, data, res) {
+  this.etcd.set(this.normalize(key), value, options, function(err, data, res) {
     if (err) {
       debug('set - error: %j', err)
       return callback(err)

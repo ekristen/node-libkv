@@ -2,6 +2,8 @@ var test = require('tape')
 var libkv = require('./libkv')
 var async = require('async')
 
+var backend_to_test = process.argv[2] || 'all'
+
 var backends = [
   'consul',
   'etcd',
@@ -9,6 +11,10 @@ var backends = [
   'redis',
   'zookeeper'
 ]
+
+if (backend_to_test != 'all') {
+  backends = [ backend_to_test ]
+}
 
 var configs = {
   consul: {
@@ -25,7 +31,7 @@ var configs = {
   },
   zookeeper: {
     uri: 'zookeeper://127.0.0.1'
-  }
+  },
 }
 
 var tests = {
@@ -91,6 +97,35 @@ var tests = {
           callback()
         })
       })
+    })
+  },
+  expires: function(client, test, callback) {
+    if (client._supportsTTL == false) {
+      test.ok(true, 'CLIENT DOES NOT SUPPORT TTL/EXPIRATION')
+      client.close(test.end.bind(null))
+      return callback()
+    }
+
+    client.set('expires', 'one', {ttl: 1}, function(err, status1) {
+      test.ok(!err, 'no error')
+
+      client.exists('expires', function(err, status2) {
+        test.ok(!err, 'no error')
+        test.equal(status2, true)
+
+        setTimeout(function() {
+          
+          client.exists('expires', function(err, status3) {
+            test.ok(!err, 'no error')
+            test.equal(status3, false)
+            
+            client.close(test.end.bind(null))
+            callback()
+            
+          })
+          
+        }, 1250)
+      })      
     })
   }
 }

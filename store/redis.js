@@ -17,6 +17,8 @@ var Redis = function Redis(endpoints, options) {
   if (this.uri.port == null) {
     this.uri.port = 6379
   }
+  
+  this._supportsTTL = true
 
   this.store = require('redis').createClient(this.uri.port, this.uri.host)
 
@@ -35,7 +37,10 @@ util.inherits(Redis, Store)
 module.exports = Redis
 
 Redis.prototype.get = function RedisGet(key, callback) {
+  var self = this
+  
   debug('get - key: %s', this.normalize(key))
+
   this.store.get(this.normalize(key), function(err, value) {
     if (err == null && value == null) {
       return callback(new NotFoundError())
@@ -53,6 +58,10 @@ Redis.prototype.get = function RedisGet(key, callback) {
 
     debug('get - pair: %j', pair)
 
+    if (self.options.valueOnly) {
+      return callback(null, pair.Value)
+    }
+
     callback(null, pair)
   })
 }
@@ -65,6 +74,8 @@ Redis.prototype.set = function RedisSet(key, value, options, callback) {
     options = {}
   }
 
+  debug('set - options: %j', options)
+
   debug('set - key: %s, value: %s', this.normalize(key), value)
   self.store.set(this.normalize(key), value, function(err, status) {
     if (err) {
@@ -72,8 +83,22 @@ Redis.prototype.set = function RedisSet(key, value, options, callback) {
       return callback(err, false)
     }
 
-    debug('set - status: %s', status)
-    callback(null, status == 'OK' ? true : false)
+    if (typeof options.ttl != 'undefined') {
+      debug('set w/ ttl', options.ttl)
+      self.store.expire(self.normalize(key), options.ttl, function(err) {
+        if (err) {
+          debug('set w/ ttl - error: %j', err)
+          return callback(err, false)
+        }
+
+        debug('set - status: %s', status)
+        callback(null, status == 'OK' ? true : false)        
+      })
+    }
+    else {
+      debug('set - status: %s', status)
+      callback(null, status == 'OK' ? true : false)
+    }
   })    
 }
 Redis.prototype.put = Redis.prototype.set

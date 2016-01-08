@@ -23,7 +23,10 @@ util.inherits(Level, Store)
 module.exports = Level
 
 Level.prototype.get = function LevelGet(key, callback) {
+  var self = this
+
   debug('get - key: %s', this.normalize(key))
+
   this.store.get(this.normalize(key), function(err, value) {
     if (err && err.status == 404) {
       return callback(new NotFoundError())
@@ -39,6 +42,10 @@ Level.prototype.get = function LevelGet(key, callback) {
     }
 
     debug('get - pair: %j', pair)
+
+    if (self.options.valueOnly) {
+      return callback(null, pair.Value)
+    }
 
     callback(null, pair)
   })

@@ -1,6 +1,7 @@
 var debug = require('debug')('libkv:store:base')
 var url = require('url')
 var util = require('util')
+var xtend = require('xtend')
 var events = require('events')
 
 function Store(options) {
@@ -8,7 +9,9 @@ function Store(options) {
     this.uri = url.parse(options.uri)
   }
   
-  this.options = options
+  this.options = xtend({
+    valueOnly: false
+  }, options)
 }
 util.inherits(Store, events.EventEmitter)
 module.exports = Store

@@ -4,6 +4,7 @@ var xtend = require('xtend')
 var clone = require('clone')
 var Store = require('./index')
 var NotFoundError = require('./error')
+var EventEmitter = require("events").EventEmitter;
 
 var Consul = function Consul(options) {
   Consul.super_.apply(this, arguments)
@@ -12,27 +13,31 @@ var Consul = function Consul(options) {
     throw new Error('unexpected uri format', this.href)
   }
 
-  if (this.uri.host == '') {
-    this.uri.host = '127.0.0.1'
+  if (this.uri.hostname == '') {
+    this.uri.hostname = '127.0.0.1'
   }
 
   if (this.uri.port == null) {
     this.uri.port = 8500
   }
 
-  this.options.host = this.uri.host
+  this._supportsTTL = false
+
+  this.options.host = this.uri.hostname
   this.options.port = this.uri.port
   
   this.consul = require('consul')(clone(this.options) || {})
 
   debug('connect')
-
+  
   return this
 }
 util.inherits(Consul, Store)
 module.exports = Consul
 
 Consul.prototype.get = function ConsulGet(key, options, callback) {
+  var self = this
+
   debug('get - key: %s', this.normalize(key))
 
   if (typeof options == 'function') {
@@ -64,6 +69,10 @@ Consul.prototype.get = function ConsulGet(key, options, callback) {
     delete pair.Metadata.Value
 
     debug('get - pair: %j', pair)
+
+    if (self.options.valueOnly) {
+      return callback(null, pair.Value)
+    }
 
     callback(null, pair)
   })
@@ -126,12 +135,34 @@ Consul.prototype.exists = function ConsulExists(key, callback) {
 }
 
 Consul.prototype.watch = function ConsulWatch(key) {
-  return this.consul.watch({
-    method: this.consul.kv.get,
+  var self = this
+
+  var watcher = new EventEmitter()
+
+  var opts = {
+    method: self.consul.kv.keys,
     options: {
       key: key
     }
-  })
+  }
+  
+  debug('watch - opts: %j', opts)
+
+  self.consul.watch(opts)
+    .on('change', function(data, res) {
+      data.forEach(function(key) {
+        self.get(key, function(err, data, res) {
+          if (!err) {
+            watcher.emit('change', key, data)
+          }
+        })
+      })
+    })
+    .on('error', function(err) {
+      watcher.emit('error', err)
+    })
+
+  return watcher
 }
 
 Consul.prototype.normalize = function ConsulNormalize(key) {
