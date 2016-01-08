@@ -8,6 +8,8 @@ Consul, etcd, and Zookeeper all require path (or folder like) structures, theref
 
 Consul, redis, and LevelDB strip the `/` from the beginning of the key, but it is required for etcd and Zookeeper.
 
+![libkv npm badge](https://nodei.co/npm/libkv.png?downloads=true&downloadRank=true&stars=true)
+
 ## Installation
 
 `npm install libkv`
