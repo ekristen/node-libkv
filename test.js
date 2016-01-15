@@ -106,7 +106,7 @@ var tests = {
       return callback()
     }
 
-    client.set('expires', 'one', {ttl: 1}, function(err, status1) {
+    client.set('expires', 'one', {ttl: 10}, function(err, status1) {
       test.ok(!err, 'no error')
 
       client.exists('expires', function(err, status2) {
@@ -124,7 +124,7 @@ var tests = {
             
           })
           
-        }, 1250)
+        }, 12250)
       })      
     })
   }

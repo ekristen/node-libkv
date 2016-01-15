@@ -34,7 +34,7 @@ The below definitions are general, they vary slightly by backend.
 
 ### .set(key, value = null, [options], [callback])
 
-* ttl (in seconds) (redis, etcd, leveldb)
+* ttl (in seconds) (redis, etcd, leveldb, consul)
 * maxRetries (etcd)
 
 ### .delete(key, [callback])
