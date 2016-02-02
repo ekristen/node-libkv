@@ -27,7 +27,7 @@ var configs = {
     uri: 'level:///tmp/testdb'
   },
   redis: {
-    uri: 'redis://'
+    uri: 'redis://localhost:6379'
   },
   zookeeper: {
     uri: 'zookeeper://127.0.0.1'

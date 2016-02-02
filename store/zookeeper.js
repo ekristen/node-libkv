@@ -10,8 +10,8 @@ var Zookeeper = function Zookeeper(options) {
     throw new Error('unexpected uri format', this.href)
   }
 
-  if (this.uri.host == '') {
-    this.uri.host = '127.0.0.1'
+  if (this.uri.hostname == '') {
+    this.uri.hostname = '127.0.0.1'
   }
 
   if (this.uri.port == null) {

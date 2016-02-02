@@ -10,8 +10,8 @@ var Redis = function Redis(endpoints, options) {
     throw new Error('unexpected uri format', this.href)
   }
 
-  if (this.uri.host == '') {
-    this.uri.host = '127.0.0.1'
+  if (this.uri.hostname == '') {
+    this.uri.hostname = '127.0.0.1'
   }
 
   if (this.uri.port == null) {
@@ -20,7 +20,7 @@ var Redis = function Redis(endpoints, options) {
   
   this._supportsTTL = true
 
-  this.store = require('redis').createClient(this.uri.port, this.uri.host)
+  this.store = require('redis').createClient(this.uri.port, this.uri.hostname)
 
   var self = this;
   [ 'error', 'ready', 'connect' ].forEach(function(ev) {

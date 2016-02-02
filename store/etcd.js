@@ -10,8 +10,8 @@ var Etcd = function Etcd(options) {
     throw new Error('unexpected uri format', this.href)
   }
 
-  if (this.uri.host == '') {
-    this.uri.host = '127.0.0.1'
+  if (this.uri.hostname == '') {
+    this.uri.hostname = '127.0.0.1'
   }
 
   if (this.uri.port == null) {
@@ -23,7 +23,7 @@ var Etcd = function Etcd(options) {
   var etcd = require('node-etcd')
   this.etcd = new etcd(this.uri.host, this.uri.port)
 
-  debug('connected', {host: this.uri.host, port: this.uri.port})
+  debug('connected', {host: this.uri.hostname, port: this.uri.port})
 
   return this
 }
