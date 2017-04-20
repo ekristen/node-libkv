@@ -12,7 +12,7 @@
   "dependencies": {
     "clone": "^2.1.1",
     "consul": "^0.28.0",
-    "debug": "^2.2.0",
+    "debug": "^2.6.4",
     "level": "^1.3.0",
     "multilevel": "^7.3.0",
     "node-etcd": "^5.0.3",
